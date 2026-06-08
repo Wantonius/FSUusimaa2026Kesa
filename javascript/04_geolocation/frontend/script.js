@@ -17,6 +17,12 @@ function findMe() {
 		status.textContent = "Cannot retrieve your location"
 	}
 	
+	const object = {
+		"name":"Erno"
+	}
+	
+	console.log(object);
+	
 	if(!navigator.getlocation) {
 		status.textContent = "No geolocation"
 	} else {
