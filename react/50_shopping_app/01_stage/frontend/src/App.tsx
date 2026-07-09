@@ -1,12 +1,15 @@
 import useAction from './hooks/useAction';
 import ShoppingForm from './components/ShoppingForm';
+import ShoppingList from './components/ShoppingList';
 function App() {
 	
-	const {state,add} = useAction();
+	const {state,add,remove,edit} = useAction();
 
 	return (
 		<>
 			<ShoppingForm add={add}/>
+			<hr/>
+			<ShoppingList list={state.list} remove={remove} edit={edit}/>
 		</>
 	)
 }

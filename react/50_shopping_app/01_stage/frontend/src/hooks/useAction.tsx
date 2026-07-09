@@ -25,6 +25,10 @@ const useAction = ():{state:State,
 	})
 	
 	useEffect(() => {
+		getList()
+	},[]);
+	
+	useEffect(() => {
 		
 		const fetchData = async () => {
 			const response = await fetch(urlRequest.request);
