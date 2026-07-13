@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend for shopping app",
+  "keywords": [
+    "express",
+    "node",
+    "react",
+    "mongodb"
+  ],
+  "license": "MIT",
+  "author": "Erno",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
