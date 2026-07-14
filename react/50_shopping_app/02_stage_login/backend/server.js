@@ -17,6 +17,8 @@ mongoose.connect("mongodb://localhost/shoppingdatabase").then(
 	(err) => console.log("Failed to connect to Mongodb. Reason",err)
 )
 
+mongoose.set("toJSON",{virtuals:true});
+
 //HELPERS AND MIDDLEWARE
 
 const ttl_diff = 3600000;
@@ -129,6 +131,18 @@ app.post("/login",function(req,res) {
 		})
 	}).catch(function(err) {
 		console.log("Error while trying to find user.Reason:",err);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
+})
+
+app.post("/logout",function(req,res) {
+	if(!req.headers.token) {
+		return res.status(404).json({"Message":"Not found"});
+	}
+	sessionModel.deleteOne({"token":req.headers.token}).then(function() {
+		return res.status(200).json({"Message":"Logged Out"});
+	}).catch(function(err) {
+		console.log("Error while logging out. Reason",err);
 		return res.status(500).json({"Message":"Internal Server Error"});
 	})
 })

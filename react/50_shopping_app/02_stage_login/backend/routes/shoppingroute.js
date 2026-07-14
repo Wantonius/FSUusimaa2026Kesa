@@ -1,12 +1,14 @@
 const express = require("express");
+const itemModel = require("../models/item");
 
 const router = express.Router();
 
 //SHOPPING ITEM
-//type string
+//type 	string
 //count number
 //price number
-//id number
+//user 	string
+//id 	string
 
 //SHOPPING API
 //GET 		/api/shopping		get shopping ListFormat
@@ -15,43 +17,63 @@ const router = express.Router();
 //PUT 		/api/shopping/:id	edit item with id
 
 router.get("/shopping",function(req,res) {
-	return res.status(200).json(database);
+	itemModel.find({"user":req.session.user}).then(function(items) {
+		return res.status(200).json(items);
+	}).catch(function(err) {
+		console.log("Error while fetching shoppinglist. Reason",err);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	});
 })
 
 router.post("/shopping",function(req,res) {
-	let item = {
+	if(!req.body) {
+		return res.status(400).json({"Message":"Bad Request"});
+	}
+	if(!req.body.type) {
+		return res.status(400).json({"Message":"Bad Request"});
+	}
+	const item = new itemModel({
 		type:req.body.type,
 		count:req.body.count,
 		price:req.body.price,
-		id:id
-	}
-	id++;
-	database.push(item);
-	console.log(database);
-	return res.status(201).json(item);
+		user:req.session.user
+	})
+	item.save().then(function(item) {
+		return res.status(201).json(item);
+	}).catch(function(err) {
+		console.log("Failed to create new item. Reason",err);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 router.delete("/shopping/:id",function(req,res) {
-	let tempId = parseInt(req.params.id);
-	database = database.filter(item => item.id !== tempId);
-	return res.status(200).json({"Message":"Success"});
+	itemModel.deleteOne({"_id":req.params.id,"user":req.session.user}).then(function() {
+		return res.status(200).json({"Message":"Success"})
+	}).catch(function(err) {
+		console.log("Error when removing item. Reason",err);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 router.put("/shopping/:id",function(req,res) {
-	let tempId = parseInt(req.params.id);
-	let item = {
+	if(!req.body) {
+		return res.status(400).json({"Message":"Bad Request"});
+	}
+	if(!req.body.type) {
+		return res.status(400).json({"Message":"Bad Request"});
+	}
+	const item = {
 		type:req.body.type,
 		count:req.body.count,
 		price:req.body.price,
-		id:tempId
+		user:req.session.user
 	}
-	for(let i=0;i<database.length;i++) {
-		if(tempId === database[i].id) {
-			database.splice(i,1,item);
-			return res.status(200).json({"Message":"Success"})
-		}
-	}
-	return res.status(404).json({"Message":"Not found"})
+	itemModel.replaceOne({"_id":req.params.id,"user":req.session.user},item).then(function() {
+		return res.status(200).json({"Message":"Success"});
+	}).catch(function(err){
+		console.log("Error when updating an item. Reason",err);
+		return res.status(500).json({"Message":"Internal Server Error"});
+	})
 })
 
 module.exports = router;
