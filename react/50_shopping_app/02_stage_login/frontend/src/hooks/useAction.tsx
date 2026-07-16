@@ -26,7 +26,8 @@ const useAction = ():{state:State,
 					  edit:(item:ShoppingItem) => void,
 					  register:(user:User) => void,
 					  login:(user:User) => void,
-					  logout:() => void} => {
+					  logout:() => void,
+					  setError:(error:string) => void} => {
 	
 	const [state,setState] = useState<State>({
 		list:[],
@@ -303,7 +304,7 @@ const useAction = ():{state:State,
 		})
 	}
 	
-	return {state,add,remove,edit,register,login,logout};
+	return {state,add,remove,edit,register,login,logout,setError};
 }
 
 export default useAction;
