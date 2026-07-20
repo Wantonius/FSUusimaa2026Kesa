@@ -21,7 +21,7 @@ export interface AppState {
 
 export interface Action {
 	type:string;
-	payload:ShoppingItem[] | string;
+	payload?:ShoppingItem[] | string;
 }
 
 export interface RootReducer {

@@ -3,19 +3,28 @@ import ShoppingItem from '../models/ShoppingItem';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
-
-interface Props {
-	list:ShoppingItem[];
-	remove(id:string):void;
-	edit(item:ShoppingItem):void;
-}
+import {removeItem,editItem} from '../actions/shoppingActions';
+import {useDispatch,useSelector} from 'react-redux';
+import type {AppState,Action} from '../types/states';
+import type {ThunkDispatch} from 'redux-thunk';
 
 interface State {
 	removeIndex:number;
 	editIndex:number;
 }
 
-const ShoppingList = (props:Props) => {
+const ShoppingList = () => {
+	
+	const dispatch:ThunkDispatch<AppState,any,Action> = useDispatch();
+	
+	const stateSelector = (state:AppState) => {
+		return {
+			list:state.shopping.list,
+			token:state.login.token
+		}
+	}
+	
+	const {list,token} = useSelector(stateSelector);
 	
 	const [state,setState] = useState<State>({
 		removeIndex:-1,
@@ -52,16 +61,16 @@ const ShoppingList = (props:Props) => {
 	}
 	
 	const remove = (id:string) => {
-		props.remove(id);
+		dispatch(removeItem(token,id));
 		changeMode("cancel",0);
 	}
 	
 	const edit = (item:ShoppingItem) => {
-		props.edit(item);
+		dispatch(editItem(token,item));
 		changeMode("cancel",0);
 	}
 	
-	const shoppingItems = props.list.map((item,index) => {
+	const shoppingItems = list.map((item,index) => {
 		if(state.removeIndex === index) {
 			return (
 				<RemoveRow key={item.id} item={item} 

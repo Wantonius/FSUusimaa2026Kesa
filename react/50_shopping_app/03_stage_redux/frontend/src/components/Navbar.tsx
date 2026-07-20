@@ -1,14 +1,25 @@
 import {Link} from 'react-router';
+import {useDispatch,useSelector} from 'react-redux';
+import type {ThunkDispatch} from 'redux-thunk';
+import type {AppState,Action} from '../types/states';
+import {logout} from '../actions/loginActions';
 
-interface Props {
-	isLogged:boolean;
-	user:string;
-	logout():void;
-}
 
-const Navbar = (props:Props) => {
+const Navbar = () => {
 	
-	if(props.isLogged) {
+	const dispatch:ThunkDispatch<AppState,any,Action> = useDispatch();
+	
+	const stateSelector = (state:AppState) => {
+		return {
+			isLogged:state.login.isLogged,
+			token:state.login.token,
+			user:state.login.user
+		}
+	}
+	
+	const {isLogged,token,user} = useSelector(stateSelector);
+	
+	if(isLogged) {
 		return(
 			<nav className="navbar navbar-expand-lg navbar-light bg-light">
 				<a className="navbar-brand" style={{marginLeft:10}}>Shopping App</a>
@@ -20,10 +31,10 @@ const Navbar = (props:Props) => {
 						<Link to="/form" className="nav-link">Add new item</Link>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
-						<p style={{"color":"blue"}} className="nav-link">Logged in as {props.user}</p>
+						<p style={{"color":"blue"}} className="nav-link">Logged in as {user}</p>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
-						<Link to="/" className="nav-link" onClick={() => props.logout()}>Logout</Link>
+						<Link to="/" className="nav-link" onClick={() => dispatch(logout(token))}>Logout</Link>
 					</li>
 				</ul>
 			</nav>
