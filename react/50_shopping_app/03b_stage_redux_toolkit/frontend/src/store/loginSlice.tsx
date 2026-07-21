@@ -68,7 +68,7 @@ export const login = createAsyncThunk("login", async (user:User,thunkAPI) => {
 	}
 })
 
-export const logout = createAsyncThunk("/logout", async(data:Token) => {
+export const logout = createAsyncThunk("/logout", async(data:Message) => {
 	const request = new Request("/logout",{
 		"method":"POST",
 		"headers":{
@@ -93,16 +93,18 @@ const loginSlice = createSlice({
 		setError:(state,action) => {
 			state.error = action.payload as string;
 		},	
-		loading:(state,action) => {
+		loading:(state) => {
 			state.loading = true;
+			state.error = "";
 		},
-		stopLoading:(state,action) => {
+		stopLoading:(state) => {
 			state.loading = false;
 		}
 	},
 	extraReducers:(builder) => {
 		builder.addCase(register.pending,(state,action) => {
 			state.loading = true
+			state.error = "";
 		})
 		builder.addCase(register.fulfilled,(state,action) => {
 			const message = action.payload as Message;
@@ -111,7 +113,8 @@ const loginSlice = createSlice({
 			saveToStorage(state);
 		})
 		builder.addCase(login.pending,(state,action) => {
-			state.loading = true
+			state.loading = true;
+			state.error = "";
 		})
 		builder.addCase(login.fulfilled,(state,action) => {
 			const message = action.payload as Message;
@@ -126,6 +129,7 @@ const loginSlice = createSlice({
 		})
 		builder.addCase(logout.pending,(state,action) => {
 			state.loading = true;
+			state.error = "";
 		})
 		builder.addCase(logout.fulfilled,(state,action) => {
 			const message = action.payload as Message;

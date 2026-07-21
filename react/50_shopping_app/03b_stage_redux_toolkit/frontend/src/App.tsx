@@ -22,12 +22,12 @@ function App() {
 	const {error,isLogged,loading} = useSelector(stateSelector);
 
 	let messageArea = <h4 style={{"height":"20px","textAlign":"center"}}></h4>
-	if(loading) {
-		messageArea = <h4 style={{"height":"20px","textAlign":"center"}}>Loading...</h4>
-	}
 	if(error) {
 		messageArea = <h4 style={{"height":"20px","textAlign":"center"}}>{error}</h4>
 	}
+	if(loading) {
+		messageArea = <h4 style={{"height":"20px","textAlign":"center"}}>Loading...</h4>
+	}	
 	if(isLogged) {
 		return (
 			<>

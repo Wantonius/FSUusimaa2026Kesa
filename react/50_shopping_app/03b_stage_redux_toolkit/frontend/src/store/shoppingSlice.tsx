@@ -15,6 +15,8 @@ const getInitialState = ():ShoppingState => {
 	}
 }
 
+const initialState = getInitialState();
+
 const saveToStorage = (state:ShoppingState) =>  {
 	sessionStorage.setItem("shoppingstate",JSON.stringify(state));
 }
@@ -124,3 +126,52 @@ export const editItem = createAsyncThunk("edititem", async (data:FetchItem,thunk
 		return {"message":"Server responded with a status "+response.status+" "+response.statusText,"token":""}
 	}	
 })
+
+const shoppingSlice = createSlice({
+	name:"Shopping",
+	initialState,
+	reducers:{},
+	extraReducers:(builder) => {
+		builder.addCase(getList.fulfilled,(state,action) => {
+			if(Array.isArray(action.payload)) {
+				state.list = action.payload as ShoppingItem[];
+				state.error = "";
+			} else {
+				const data = action.payload as Message;
+				if(data.message) {
+					state.error = data.message;
+				}
+			}
+			saveToStorage(state);
+		})
+		builder.addCase(addItem.fulfilled,(state,action) => {
+			const data = action.payload as Message;
+			if(data.message) {
+				state.error = data.message;
+			} else {
+				state.error = "";
+			}
+			saveToStorage(state);
+		})
+		builder.addCase(removeItem.fulfilled,(state,action) => {
+			const data = action.payload as Message;
+			if(data.message) {
+				state.error = data.message;
+			} else {
+				state.error = "";
+			}
+			saveToStorage(state);
+		})
+		builder.addCase(editItem.fulfilled,(state,action) => {
+			const data = action.payload as Message;
+			if(data.message) {
+				state.error = data.message;
+			} else {
+				state.error = "";
+			}
+			saveToStorage(state);
+		})
+	}
+})
+
+export default shoppingSlice.reducer;

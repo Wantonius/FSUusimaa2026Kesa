@@ -1,13 +1,13 @@
 import {Link} from 'react-router';
 import {useDispatch,useSelector} from 'react-redux';
-import type {ThunkDispatch} from 'redux-thunk';
-import type {AppState,Action} from '../types/states';
-import {logout} from '../actions/loginActions';
+import type {ThunkDispatch,PayloadAction} from '@reduxjs/toolkit';
+import type {AppState} from '../types/states';
+import {logout} from '../store/loginSlice';
 
 
 const Navbar = () => {
 	
-	const dispatch:ThunkDispatch<AppState,any,Action> = useDispatch();
+	const dispatch:ThunkDispatch<AppState,any,PayloadAction> = useDispatch();
 	
 	const stateSelector = (state:AppState) => {
 		return {
@@ -34,7 +34,7 @@ const Navbar = () => {
 						<p style={{"color":"blue"}} className="nav-link">Logged in as {user}</p>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
-						<Link to="/" className="nav-link" onClick={() => dispatch(logout(token))}>Logout</Link>
+						<Link to="/" className="nav-link" onClick={() => dispatch(logout({message:"",token:token}))}>Logout</Link>
 					</li>
 				</ul>
 			</nav>

@@ -1,9 +1,9 @@
 import React,{useState} from 'react';
 import User from '../models/User';
 import {useDispatch} from 'react-redux';
-import type {ThunkDispatch} from 'redux-thunk';
-import {register,login,registerFailed} from '../actions/loginActions';
-import type {AppState,Action} from '../types/states';
+import type {ThunkDispatch,PayloadAction} from '@reduxjs/toolkit';
+import {register,login,setError} from '../store/loginSlice';
+import type {AppState} from '../types/states';
 
 interface State {
 	username:string;
@@ -18,7 +18,7 @@ const LoginPage = () => {
 		password:""
 	})
 
-	const dispatch:ThunkDispatch<AppState,any,Action> = useDispatch();
+	const dispatch:ThunkDispatch<AppState,any,PayloadAction> = useDispatch();
 	
 	const onChange = (event:React.ChangeEvent<HTMLInputElement>) => {
 		setState((state) => {
@@ -32,7 +32,7 @@ const LoginPage = () => {
 	const onRegister = (event:React.SyntheticEvent) => {
 		event.preventDefault();
 		if(state.username.length < 4 || state.password.length < 8) {
-			dispatch(registerFailed("Username must be 4 and password 8 characters long"));
+			dispatch(setError("Username must be 4 and password 8 characters long"));
 			return;
 		}
 		const user = new User(state.username,state.password);
@@ -42,7 +42,7 @@ const LoginPage = () => {
 	const onLogin = (event:React.SyntheticEvent) => {
 		event.preventDefault();
 		if(state.username.length < 4 || state.password.length < 8) {
-			dispatch(registerFailed("Username must be 4 and password 8 characters long"));
+			dispatch(setError("Username must be 4 and password 8 characters long"));
 			return;
 		}
 		const user = new User(state.username,state.password);

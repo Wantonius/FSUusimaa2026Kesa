@@ -1,35 +1,29 @@
 import {useState} from 'react';
-import ShoppingItem from '../models/ShoppingItem';
+import Hotel from '../models/Hotel';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
-import {removeItem,editItem} from '../store/shoppingSlice';
 import {useDispatch,useSelector} from 'react-redux';
+import {removeHotel,editHotel} from '../actions/hotelActions';
 import type {AppState} from '../types/states';
-import type {ThunkDispatch,PayloadAction} from '@reduxjs/toolkit';
 
 interface State {
 	removeIndex:number;
 	editIndex:number;
 }
 
-const ShoppingList = () => {
-	
-	const dispatch:ThunkDispatch<AppState,any,PayloadAction> = useDispatch();
-	
-	const stateSelector = (state:AppState) => {
-		return {
-			list:state.shopping.list,
-			token:state.login.token
-		}
-	}
-	
-	const {list,token} = useSelector(stateSelector);
+const HotelList = () => {
 	
 	const [state,setState] = useState<State>({
 		removeIndex:-1,
 		editIndex:-1
 	})
+	
+	const dispatch = useDispatch();
+	
+	const listSelector = (state:AppState) => state.list
+	
+	const list = useSelector(listSelector);
 	
 	const changeMode = (mode:string,index:number) => {
 		switch(mode) {
@@ -54,55 +48,54 @@ const ShoppingList = () => {
 				})
 				return;
 			}
-			default:{
+			default:
 				return;
-			}
 		}
 	}
 	
-	const remove = (id:string) => {
-		dispatch(removeItem({message:id,token:token}));
+	const remove = (id:number) => {
+		dispatch(removeHotel(id));
 		changeMode("cancel",0);
 	}
 	
-	const edit = (item:ShoppingItem) => {
-		dispatch(editItem({item:item,token:token}));
+	const edit = (hotel:Hotel) => {
+		dispatch(editHotel(hotel));
 		changeMode("cancel",0);
 	}
 	
-	const shoppingItems = list.map((item,index) => {
+	const hotels = list.map((hotel,index) => {
 		if(state.removeIndex === index) {
-			return (
-				<RemoveRow key={item.id} item={item} 
-				changeMode={changeMode} remove={remove}/>
+			return(
+				<RemoveRow key={hotel.id} hotel={hotel} changeMode={changeMode} remove={remove}/>
 			)
 		}
 		if(state.editIndex === index) {
 			return(
-				<EditRow key={item.id} item={item} 
-				changeMode={changeMode} edit={edit}/>
+				<EditRow key={hotel.id} hotel={hotel} changeMode={changeMode} edit={edit}/>
 			)
 		}
 		return(
-			<Row key={item.id} item={item} index={index} changeMode={changeMode}/>
+			<Row key={hotel.id} hotel={hotel} index={index} changeMode={changeMode}/>
 		)
 	})
 	return(
 		<table className="table table-striped">
 			<thead>
 				<tr>
-					<th>Type</th>
-					<th>Count</th>
-					<th>Price</th>
+					<th>Hotel Name</th>
+					<th>Address</th>
+					<th>City</th>
+					<th>Stars</th>
+					<th>Room Price</th>
 					<th>Remove</th>
 					<th>Edit</th>
 				</tr>
 			</thead>
 			<tbody>
-			{shoppingItems}
+			{hotels}
 			</tbody>
 		</table>
 	)
 }
 
-export default ShoppingList;
+export default HotelList;
