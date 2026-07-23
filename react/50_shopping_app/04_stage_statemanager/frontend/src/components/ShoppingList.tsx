@@ -1,27 +1,26 @@
 import {useState} from 'react';
-import Hotel from '../models/Hotel';
+import ShoppingItem from '../models/ShoppingItem';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
-import useAction from '../hooks/useAction';
-import useAppState from '../hooks/useAppState'
-import type {AppState} from '../types/states';
+
+interface Props {
+	list:ShoppingItem[];
+	remove(id:string):void;
+	edit(item:ShoppingItem):void;
+}
 
 interface State {
 	removeIndex:number;
 	editIndex:number;
 }
 
-const HotelList = () => {
+const ShoppingList = (props:Props) => {
 	
 	const [state,setState] = useState<State>({
 		removeIndex:-1,
 		editIndex:-1
 	})
-	
-	const {removeHotel,editHotel} = useAction();
-	
-	const {list} = useAppState();
 	
 	const changeMode = (mode:string,index:number) => {
 		switch(mode) {
@@ -46,54 +45,55 @@ const HotelList = () => {
 				})
 				return;
 			}
-			default:
+			default:{
 				return;
+			}
 		}
 	}
 	
-	const remove = (id:number) => {
-		removeHotel(id);
+	const remove = (id:string) => {
+		props.remove(id);
 		changeMode("cancel",0);
 	}
 	
-	const edit = (hotel:Hotel) => {
-		editHotel(hotel);
+	const edit = (item:ShoppingItem) => {
+		props.edit(item);
 		changeMode("cancel",0);
 	}
 	
-	const hotels = list.map((hotel,index) => {
+	const shoppingItems = props.list.map((item,index) => {
 		if(state.removeIndex === index) {
-			return(
-				<RemoveRow key={hotel.id} hotel={hotel} changeMode={changeMode} remove={remove}/>
+			return (
+				<RemoveRow key={item.id} item={item} 
+				changeMode={changeMode} remove={remove}/>
 			)
 		}
 		if(state.editIndex === index) {
 			return(
-				<EditRow key={hotel.id} hotel={hotel} changeMode={changeMode} edit={edit}/>
+				<EditRow key={item.id} item={item} 
+				changeMode={changeMode} edit={edit}/>
 			)
 		}
 		return(
-			<Row key={hotel.id} hotel={hotel} index={index} changeMode={changeMode}/>
+			<Row key={item.id} item={item} index={index} changeMode={changeMode}/>
 		)
 	})
 	return(
 		<table className="table table-striped">
 			<thead>
 				<tr>
-					<th>Hotel Name</th>
-					<th>Address</th>
-					<th>City</th>
-					<th>Stars</th>
-					<th>Room Price</th>
+					<th>Type</th>
+					<th>Count</th>
+					<th>Price</th>
 					<th>Remove</th>
 					<th>Edit</th>
 				</tr>
 			</thead>
 			<tbody>
-			{hotels}
+			{shoppingItems}
 			</tbody>
 		</table>
 	)
 }
 
-export default HotelList;
+export default ShoppingList;
