@@ -19,7 +19,7 @@ const getInitialState = ():AppState => {
 			isLogged:false,
 			loading:false,
 			error:"",
-			token:""
+			token:"",
 			user:""
 		}
 	}

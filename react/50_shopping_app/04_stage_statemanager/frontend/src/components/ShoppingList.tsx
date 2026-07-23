@@ -3,24 +3,24 @@ import ShoppingItem from '../models/ShoppingItem';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
+import useAction from '../hooks/useAction';
+import useAppState from '../hooks/useAppState';
 
-interface Props {
-	list:ShoppingItem[];
-	remove(id:string):void;
-	edit(item:ShoppingItem):void;
-}
 
 interface State {
 	removeIndex:number;
 	editIndex:number;
 }
 
-const ShoppingList = (props:Props) => {
+const ShoppingList = () => {
 	
 	const [state,setState] = useState<State>({
 		removeIndex:-1,
 		editIndex:-1
 	})
+	
+	const {remove,edit} = useAction();
+	const {list} = useAppState();
 	
 	const changeMode = (mode:string,index:number) => {
 		switch(mode) {
@@ -51,27 +51,27 @@ const ShoppingList = (props:Props) => {
 		}
 	}
 	
-	const remove = (id:string) => {
-		props.remove(id);
+	const removeItem = (id:string) => {
+		remove(id);
 		changeMode("cancel",0);
 	}
 	
-	const edit = (item:ShoppingItem) => {
-		props.edit(item);
+	const editItem = (item:ShoppingItem) => {
+		edit(item);
 		changeMode("cancel",0);
 	}
 	
-	const shoppingItems = props.list.map((item,index) => {
+	const shoppingItems = list.map((item,index) => {
 		if(state.removeIndex === index) {
 			return (
 				<RemoveRow key={item.id} item={item} 
-				changeMode={changeMode} remove={remove}/>
+				changeMode={changeMode} remove={removeItem}/>
 			)
 		}
 		if(state.editIndex === index) {
 			return(
 				<EditRow key={item.id} item={item} 
-				changeMode={changeMode} edit={edit}/>
+				changeMode={changeMode} edit={editItem}/>
 			)
 		}
 		return(
