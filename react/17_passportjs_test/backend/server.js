@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const passport = require("passport");
 const localStrategy = require("passport-local");
-const mongoStore = require("connect-mongo");
+const {MongoStore} = require("connect-mongo");
 
 const app = express();
 
@@ -29,7 +29,7 @@ app.use(session({
 	secret:"NotNormallyInCode",
 	saveUninitialized:false,
 	cookie:{maxAge:1000*60*60},
-	store:mongoStore.create({
+	store:MongoStore.create({
 		mongoUrl:url,
 		collectionName:"sessions"
 	})
